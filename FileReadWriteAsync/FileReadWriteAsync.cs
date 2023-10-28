@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace StreamReadWriteAsync
@@ -14,19 +16,29 @@ namespace StreamReadWriteAsync
         //условие записи: символы схраняют порядок и принадлежат ascii от a..z
         public async Task TransferSymbolsAsync(Stream source, Stream destination)
         {
-            byte[] buffer = new byte[1];
+            byte[] buffer = new byte[4];
             try
             {
-                
                 while (true)
                 {
-                    var task = source.ReadAsync(buffer, 0, 1);
+                    var task = source.ReadAsync(buffer, 0, buffer.Length);
                     await task;
                     if (task.Result == 0)
                         break;
-                    if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
+                    byte[] bufferOut = new byte[task.Result];
+                    int cntSymbolInStream = 0;
+                    for (int i = 0; i < bufferOut.Length; i++)
                     {
-                        await destination.WriteAsync(buffer);
+                        if (buffer[i] >= 0x61 && buffer[i] <= 0x7a)
+                        {
+                            bufferOut[cntSymbolInStream] = buffer[i];
+                            cntSymbolInStream++;
+                        }
+                    }
+
+                    if (cntSymbolInStream > 0)
+                    {
+                        await destination.WriteAsync(bufferOut, 0, cntSymbolInStream);
                     }
                 }
             }
@@ -35,29 +47,35 @@ namespace StreamReadWriteAsync
                 Console.WriteLine(ex.Message);
                 throw;
             }
-            finally
-            {
-                destination.Dispose();
-                source.Dispose();
-            }
         }
 
         public Task TransferSymbols(Stream source, Stream destination)
         {
             return Task.Run(async () =>
             {
-                byte[] buffer = new byte[1];
+                byte[] buffer = new byte[4];
                 try
                 {
                     while (true)
                     {
-                        var task = source.ReadAsync(buffer,0,1);
+                        var task = source.ReadAsync(buffer, 0, buffer.Length);
                         await task;
                         if (task.Result == 0)
                             break;
-                        if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
+                        byte[] bufferOut = new byte[task.Result];
+                        int cntSymbolInStream = 0;
+                        for (int i = 0; i < bufferOut.Length; i++)
                         {
-                            await destination.WriteAsync(buffer);
+                            if (buffer[i] >= 0x61 && buffer[i] <= 0x7a)
+                            {
+                                bufferOut[cntSymbolInStream] =buffer[i];
+                                cntSymbolInStream++;
+                            }
+                        }
+                        
+                        if (cntSymbolInStream > 0)
+                        {
+                            await destination.WriteAsync(bufferOut,0, cntSymbolInStream);
                         }
                     }
                 }
@@ -66,12 +84,6 @@ namespace StreamReadWriteAsync
                     Console.WriteLine(ex.Message);
                     throw;
                 }
-                //finally
-                //{
-                //    destination.Dispose();
-                //    source.Dispose();
-
-                //}
             });
         }
     }

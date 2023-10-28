@@ -22,8 +22,6 @@ namespace FileReadWriteAsyncTests
             streamOut.Dispose();
 
             //Assert
-            Assert.False(streamIn.CanRead);
-            Assert.False(streamOut.CanWrite);
             Assert.True(task.IsCompletedSuccessfully);
 
         }
@@ -43,8 +41,6 @@ namespace FileReadWriteAsyncTests
             streamOut.Dispose();
 
             //Assert
-            Assert.False(streamIn.CanRead);
-            Assert.False(streamOut.CanWrite);
             Assert.True(task.IsCompletedSuccessfully);
         }
     }
