@@ -27,22 +27,22 @@ namespace FileReadWriteAsyncTests
 
         }
 
-        [Fact]
-        public async Task Test_TransferSymbols()
-        {
-            //Arrange
-            Stream streamIn = new FileStream("test.raw", FileMode.Open);
-            Stream streamOut = new FileStream("testOut.raw", FileMode.Create);
-            var ob = new FileReadWriteAsync();
+        //[Fact]
+        //public async Task Test_TransferSymbols()
+        //{
+        //    //Arrange
+        //    Stream streamIn = new FileStream("test.raw", FileMode.Open);
+        //    Stream streamOut = new FileStream("testOut.raw", FileMode.Create);
+        //    var ob = new FileReadWriteAsync();
 
-            //Act
-            var task = ob.TransferSymbols(streamIn, streamOut);
-            await task;
-            streamIn.Dispose();
-            streamOut.Dispose();
+        //    //Act
+        //    var task = ob.TransferSymbols(streamIn, streamOut);
+        //    await task;
+        //    streamIn.Dispose();
+        //    streamOut.Dispose();
 
-            //Assert
-            Assert.True(task.IsCompletedSuccessfully);
-        }
+        //    //Assert
+        //    Assert.True(task.IsCompletedSuccessfully);
+        //}
     }
 }
