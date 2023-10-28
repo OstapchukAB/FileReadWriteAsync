@@ -7,13 +7,16 @@ namespace FileReadWriteAsyncTests
 
     public class FileReadWriteAsyncTests
     {
-        [Fact]
-        public async Task Test_TransferSymbolsAsync()
+        [Theory]
+        [InlineData("test.raw",224)]
+        [InlineData("test2Gb.raw", 1024)]
+        [InlineData("test2Gb.raw", 4096)]
+        [InlineData("test2Gb.raw", 8192)]
+        public async Task Test_TransferSymbolsAsync(string pathFile, int buferLenth)
         {
             //Arrange
-            Stream streamIn = new FileStream("test.raw", FileMode.Open);
+            Stream streamIn = new FileStream(pathFile, FileMode.Open);
             Stream streamOut = new FileStream("testOut.raw", FileMode.Create);
-            int buferLenth = 224;
             var ob = new FileReadWriteAsync();
 
             //Act
@@ -24,25 +27,29 @@ namespace FileReadWriteAsyncTests
 
             //Assert
             Assert.True(task.IsCompletedSuccessfully);
-
         }
 
-        //[Fact]
-        //public async Task Test_TransferSymbols()
-        //{
-        //    //Arrange
-        //    Stream streamIn = new FileStream("test.raw", FileMode.Open);
-        //    Stream streamOut = new FileStream("testOut.raw", FileMode.Create);
-        //    var ob = new FileReadWriteAsync();
+        [Theory]
+        [InlineData("test2Gb.raw", 1024)]
+        [InlineData("test2Gb.raw", 4096)]
+        [InlineData("test2Gb.raw", 8192)]
+        public async Task TransferSymbolsAsyncWithArrayPool(string pathFile, int buferLenth)
+        {
+            //Arrange
+            Stream streamIn = new FileStream(pathFile, FileMode.Open);
+            Stream streamOut = new FileStream("testOut.raw", FileMode.Create);
+            var ob = new FileReadWriteAsync();
 
-        //    //Act
-        //    var task = ob.TransferSymbols(streamIn, streamOut);
-        //    await task;
-        //    streamIn.Dispose();
-        //    streamOut.Dispose();
+            //Act
+            var task = ob.TransferSymbolsAsyncWithArrayPool(streamIn, streamOut, buferLenth);
+            await task;
+            streamIn.Dispose();
+            streamOut.Dispose();
 
-        //    //Assert
-        //    Assert.True(task.IsCompletedSuccessfully);
-        //}
+            //Assert
+            Assert.True(task.IsCompletedSuccessfully);
+        }
+
+
     }
 }
