@@ -18,6 +18,8 @@ namespace FileReadWriteAsyncTests
             //Act
             var task = ob.TransferSymbolsAsync(streamIn, streamOut);
             await task;
+            streamIn.Dispose();
+            streamOut.Dispose();
 
             //Assert
             Assert.False(streamIn.CanRead);
@@ -37,7 +39,9 @@ namespace FileReadWriteAsyncTests
             //Act
             var task = ob.TransferSymbols(streamIn, streamOut);
             await task;
-           
+            streamIn.Dispose();
+            streamOut.Dispose();
+
             //Assert
             Assert.False(streamIn.CanRead);
             Assert.False(streamOut.CanWrite);
