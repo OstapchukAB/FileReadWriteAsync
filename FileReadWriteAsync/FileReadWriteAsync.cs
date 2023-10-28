@@ -20,9 +20,9 @@ namespace StreamReadWriteAsync
                 
                 while (true)
                 {
-                    var valueTask = source.ReadAsync(buffer);
-                    var task = await valueTask.AsTask();
-                    if (task == 0)
+                    var task = source.ReadAsync(buffer, 0, 1);
+                    await task;
+                    if (task.Result == 0)
                         break;
                     if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
                     {
@@ -51,9 +51,9 @@ namespace StreamReadWriteAsync
                 {
                     while (true)
                     {
-                        var valueTask = source.ReadAsync(buffer,0,1);
-                        var task = await valueTask;
-                        if (task == 0)
+                        var task = source.ReadAsync(buffer,0,1);
+                        await task;
+                        if (task.Result == 0)
                             break;
                         if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
                         {
