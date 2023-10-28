@@ -14,9 +14,9 @@ namespace StreamReadWriteAsync
         }
         //Читаем и пишем асинхронно из файла и в файл
         //условие записи: символы схраняют порядок и принадлежат ascii от a..z
-        public async Task TransferSymbolsAsync(Stream source, Stream destination)
+        public async Task TransferSymbolsAsync(Stream source, Stream destination, int buferLenth)
         {
-            byte[] buffer = new byte[4];
+            byte[] buffer = new byte[buferLenth];
             try
             {
                 while (true)

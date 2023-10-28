@@ -13,10 +13,11 @@ namespace FileReadWriteAsyncTests
             //Arrange
             Stream streamIn = new FileStream("test.raw", FileMode.Open);
             Stream streamOut = new FileStream("testOut.raw", FileMode.Create);
+            int buferLenth = 224;
             var ob = new FileReadWriteAsync();
 
             //Act
-            var task = ob.TransferSymbolsAsync(streamIn, streamOut);
+            var task = ob.TransferSymbolsAsync(streamIn, streamOut, buferLenth);
             await task;
             streamIn.Dispose();
             streamOut.Dispose();
