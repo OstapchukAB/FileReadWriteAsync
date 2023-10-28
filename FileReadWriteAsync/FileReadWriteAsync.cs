@@ -1,76 +1,34 @@
-﻿namespace StreamReadWriteAsync;
-public class FileReadWriteAsync
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace StreamReadWriteAsync
 {
-    public static void Main()
+    public class FileReadWriteAsync
     {
-
-    }
-    //Читаем и пишем асинхронно из файла и в файл
-    //условие записи: символы схраняют порядок и принадлежат ascii от a..z
-    public async Task<int> TransferSymbolsAsync(Stream source, Stream destination)
-    {
-        byte[] buffer = new byte[1];
-        try
+        public static void Main()
         {
-            var cntOUT = 0;
-
-            while (source.Position < source.Length)
-            {
-                checked
-                {
-                    await source.ReadAsync(buffer);
-                    {
-                        if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
-                        {
-                            await destination.WriteAsync(buffer);
-                            cntOUT++;
-                        }
-                    }
-                }
-
-
-            }
-            return cntOUT;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
-        finally
-        {
-            destination.Dispose();
-            source.Dispose();
 
         }
-    }
-
-    public Task TransferSymbols(Stream source, Stream destination)
-    {
-        return Task.Run(async () =>
+        //Читаем и пишем асинхронно из файла и в файл
+        //условие записи: символы схраняют порядок и принадлежат ascii от a..z
+        public async Task TransferSymbolsAsync(Stream source, Stream destination)
         {
             byte[] buffer = new byte[1];
             try
             {
-                var cntOUT = 0;
-
-                while (source.Position < source.Length)
+                
+                while (true)
                 {
-                    checked
+                    var valueTask = source.ReadAsync(buffer);
+                    var task = await valueTask.AsTask();
+                    if (task == 0)
+                        break;
+                    if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
                     {
-                        await source.ReadAsync(buffer);
-                        {
-                            if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
-                            {
-                                await destination.WriteAsync(buffer);
-                                cntOUT++;
-                            }
-                        }
+                        await destination.WriteAsync(buffer);
                     }
-
-
                 }
-                return cntOUT;
             }
             catch (Exception ex)
             {
@@ -81,8 +39,40 @@ public class FileReadWriteAsync
             {
                 destination.Dispose();
                 source.Dispose();
-
             }
-        });
+        }
+
+        public Task TransferSymbols(Stream source, Stream destination)
+        {
+            return Task.Run(async () =>
+            {
+                byte[] buffer = new byte[1];
+                try
+                {
+                    while (true)
+                    {
+                        var valueTask = source.ReadAsync(buffer);
+                        var task = await valueTask.AsTask();
+                        if (task == 0)
+                            break;
+                        if (buffer[0] >= 0x61 && buffer[0] <= 0x7a)
+                        {
+                            await destination.WriteAsync(buffer);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    throw;
+                }
+                finally
+                {
+                    destination.Dispose();
+                    source.Dispose();
+
+                }
+            });
+        }
     }
 }
